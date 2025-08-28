@@ -25,6 +25,7 @@
       systems = import inputs.systems;
       imports = [
         ./nix/formatting.nix
+        ./nix/router.nix
       ];
     };
 }

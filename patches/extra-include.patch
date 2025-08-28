@@ -1,0 +1,12 @@
+diff --git a/plat/mediatek/mt7988/platform.mk b/plat/mediatek/mt7988/platform.mk
+index f08665c73..2ad3e4a91 100644
+--- a/plat/mediatek/mt7988/platform.mk
++++ b/plat/mediatek/mt7988/platform.mk
+@@ -24,6 +24,7 @@ RESET_TO_BL2		:=	1
+ PLAT_INCLUDES		:=	-Iinclude/plat/arm/common			\
+ 				-Iinclude/plat/arm/common/aarch64		\
+ 				-I$(APSOC_COMMON)				\
++				-I$(APSOC_COMMON)/bl2				\
+ 				-I$(APSOC_COMMON)/drivers/uart			\
+ 				-I$(APSOC_COMMON)/drivers/trng/v2		\
+ 				-I$(APSOC_COMMON)/drivers/wdt			\
