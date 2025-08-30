@@ -2,42 +2,6 @@
 
 This is mostly lift and shift from <https://gitlab.com/K900/nix>.
 
-TODO what about this `deviceTrees.overlays`? another module?
-
-```nix
-deviceTree.overlays = [
-  {
-    name = "bpi-r4-emmc";
-    dtsText = ''
-      /dts-v1/;
-      /plugin/;
-
-      / {
-        compatible = "bananapi,bpi-r4";
-      };
-
-      &mmc0 {
-        pinctrl-names = "default", "state_uhs";
-        pinctrl-0 = <&mmc0_pins_emmc_51>;
-        pinctrl-1 = <&mmc0_pins_emmc_51>;
-        bus-width = <8>;
-        max-frequency = <200000000>;
-        cap-mmc-highspeed;
-        mmc-hs200-1_8v;
-        mmc-hs400-1_8v;
-        hs400-ds-delay = <0x12814>;
-        vqmmc-supply = <&reg_1p8v>;
-        vmmc-supply = <&reg_3p3v>;
-        non-removable;
-        no-sd;
-        no-sdio;
-        status = "okay";
-      };
-    '';
-  }
-];
-```
-
 ### legacy notes
 
 ## Build firmware
@@ -115,26 +79,4 @@ Writing 6914048 byte(s) (3376 page(s)) at offset 0x00000000
 
 ```console
 $ nix build .#nixosConfigurations.bpir4.config.system.build.images.sd-card
-```
-
-
-## booting
-
-```console
-[   14.454215] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
-[   14.462880] cfg80211: failed to load regulatory.db
-[  OK  ] Finished SSH Host Keys Generation.
-         Starting SSH Daemon...
-[  OK  ] Started SSH Daemon.
-[   19.462521] fbcon: Taking over console
-
-
-<<< Welcome to NixOS 25.11.20250825.3b9f00d (aarch64) - ttyS0 >>>
-
-Run 'nixos-help' for the NixOS manual.
-
-bpir4-jfly login: root
-Password:
-
-[root@bpir4-jfly:~]# [   33.760577] vproc: disabling
 ```
