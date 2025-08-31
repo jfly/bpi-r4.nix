@@ -8,7 +8,7 @@
 pkgs.buildLinux {
   version = "6.17.0-rc3";
   modDirVersion = "6.17.0-rc3";
-  src = inputs.linux-bpi-r4;
+  src = inputs.linux;
 
   kernelPatches = [
     {

@@ -1,4 +1,4 @@
-# bpir4.nix
+# bpi-r4.nix
 
 This is mostly lift and shift from <https://gitlab.com/K900/nix>.
 
@@ -7,7 +7,7 @@ This is mostly lift and shift from <https://gitlab.com/K900/nix>.
 ## Build firmware
 
 ```console
-$ nix build .#nixosConfigurations.bpir4.config.system.build.bpir4-firmware
+$ nix build .#nixosConfigurations.bpi-r4.config.system.build.bpir4-firmware
 ```
 
 ## In u-boot (from openwrt)
@@ -78,5 +78,5 @@ Writing 6914048 byte(s) (3376 page(s)) at offset 0x00000000
 ## Build OS
 
 ```console
-$ nix build .#nixosConfigurations.bpir4.config.system.build.images.sd-card
+$ nix build .#nixosConfigurations.bpi-r4.config.system.build.images.sd-card
 ```

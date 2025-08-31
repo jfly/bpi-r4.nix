@@ -8,7 +8,7 @@
   system.stateVersion = "25.11";
   nixpkgs.hostPlatform.system = "aarch64-linux";
 
-  networking.hostName = "bpir4-example";
+  networking.hostName = "bpi-r4-example";
 
   boot = {
     initrd.systemd.enable = true;

@@ -5,8 +5,8 @@
 }:
 let
   uboot = pkgs.buildUBoot {
-    src = inputs.uboot-bpi-r4;
-    version = "2025.07-bpi";
+    src = inputs.uboot;
+    version = "2025.07-bpi"; # <<< eh? >>>
     defconfig = "mt7988a_bananapi_bpi-r4-bootstd_defconfig";
     filesToInstall = [ "u-boot.bin" ];
   };

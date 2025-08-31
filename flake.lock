@@ -77,7 +77,7 @@
         "type": "github"
       }
     },
-    "linux-bpi-r4": {
+    "linux": {
       "flake": false,
       "locked": {
         "lastModified": 1756060459,
@@ -129,11 +129,11 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "git-hooks-nix": "git-hooks-nix",
-        "linux-bpi-r4": "linux-bpi-r4",
+        "linux": "linux",
         "nixpkgs": "nixpkgs",
         "systems": "systems",
         "treefmt-nix": "treefmt-nix",
-        "uboot-bpi-r4": "uboot-bpi-r4"
+        "uboot": "uboot"
       }
     },
     "systems": {
@@ -171,7 +171,7 @@
         "type": "github"
       }
     },
-    "uboot-bpi-r4": {
+    "uboot": {
       "flake": false,
       "locked": {
         "lastModified": 1751975713,

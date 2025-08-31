@@ -42,7 +42,7 @@
 
       nixpkgs.overlays = [ self.overlays.default ];
       boot = {
-        kernelPackages = pkgs.linuxPackages_bpir4;
+        kernelPackages = pkgs.linuxPackages_bpi-r4;
 
         loader.systemd-boot.enable = true;
 

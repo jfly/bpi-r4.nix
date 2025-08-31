@@ -7,12 +7,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    uboot-bpi-r4 = {
+    uboot = {
       url = "github:K900/u-boot/bpi-r4";
       flake = false;
     };
 
-    linux-bpi-r4 = {
+    linux = {
       url = "github:K900/linux/bpi-r4-test";
       flake = false;
     };
@@ -39,8 +39,10 @@
       ];
 
       flake.overlays.default = final: prev: {
-        linuxPackages_bpir4 = final.linuxPackagesFor (final.callPackage ./kernel.nix { inherit inputs; });
+        # <<< TODO: naming? `linuxPackages_bpi-r4`? should i be calling `final.linuxPackagesFor` or should the user? >>>
+        linuxPackages_bpi-r4 = final.linuxPackagesFor (final.callPackage ./kernel.nix { inherit inputs; });
 
+        # TODO: remove. Matt says mainline Linux works fine.
         mt7996-firmware =
           let
             mt76-owrt = final.fetchFromGitHub {
