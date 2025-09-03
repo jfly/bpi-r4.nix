@@ -9,7 +9,7 @@
 let
   uboot = pkgs.buildUBoot {
     src = inputs.uboot;
-    version = "2025.07-bpi"; # <<< eh? >>>
+    version = inputs.uboot.lastModifiedDate;
     defconfig = "mt7988a_bananapi_bpi-r4-bootstd_defconfig";
     filesToInstall = [ "u-boot.bin" ];
 
@@ -21,15 +21,18 @@ let
     '';
   };
 
-  # <<< TODO This can get cleaner once <https://github.com/NixOS/nixpkgs/commit/4092d0555e48589472e0795cd10a110cce29afe9> lands in nixos-unstable.
+  # TODO: clean this up once
+  # <https://github.com/NixOS/nixpkgs/commit/4092d0555e48589472e0795cd10a110cce29afe9>
+  # lands in nixos-unstable.
   tfA = pkgs.buildArmTrustedFirmware {
+    src = inputs.arm-trusted-firmware;
     platform = "mt7988";
     makeFlags = [
       "BL33=${uboot}/u-boot.bin" # FIP-ify our uboot
       "BOOT_DEVICE=${if uartBoot then "ram" else "spim-nand"}"
-      "DRAM_USE_COMB=1" # you're supposed to use this one, sayeth mediatek # <<< source?
+      "DRAM_USE_COMB=1" # you're supposed to use this one, sayeth mediatek
       "DDR4_4BG_MODE=0" # disable large RAM support, for some reason this breaks things
-      "USE_MKIMAGE=1" # use uboot mkimage instead of vendor mtk tool #<<< why?
+      "USE_MKIMAGE=1" # use uboot mkimage instead of vendor mtk tool
       "bl2"
       "fip"
     ]
@@ -52,15 +55,10 @@ let
       ];
   };
 
-  # I believe this can get cleaner once <https://github.com/NixOS/nixpkgs/commit/4092d0555e48589472e0795cd10a110cce29afe9> lands in nixos-unstable.
+  # I believe this can get cleaner once
+  # <https://github.com/NixOS/nixpkgs/commit/4092d0555e48589472e0795cd10a110cce29afe9>
+  # lands in nixos-unstable.
   tfA' = tfA.overrideAttrs (old: {
-    src = pkgs.fetchFromGitHub {
-      # <<< flake input? is this a magical rev?
-      owner = "mtk-openwrt";
-      repo = "arm-trusted-firmware";
-      rev = "e090770684e775711a624e68e0b28112227a4c38";
-      hash = "sha256-VI5OB2nWdXUjkSuUXl/0yQN+/aJp9Jkt+hy7DlL+PMg=";
-    };
     nativeBuildInputs =
       old.nativeBuildInputs
       ++ (with pkgs; [

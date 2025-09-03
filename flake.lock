@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "arm-trusted-firmware": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1752233663,
+        "narHash": "sha256-m9ApkBVf0I11rNg68vxofGRJ+BcnlM6C+Zrn8TfMvbY=",
+        "owner": "mtk-openwrt",
+        "repo": "arm-trusted-firmware",
+        "rev": "78a0dfd927bb00ce973a1f8eb4079df0f755887a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mtk-openwrt",
+        "ref": "mtksoc",
+        "repo": "arm-trusted-firmware",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -96,16 +113,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1756542300,
-        "narHash": "sha256-tlOn88coG5fzdyqz6R93SQL5Gpq+m/DsWpekNFhqPQk=",
-        "owner": "NixOS",
+        "lastModified": 1756843540,
+        "narHash": "sha256-0mjI/0ProNWePSIdQizIMAFWbGanoOdb1pSzXmXud8k=",
+        "owner": "jfly",
         "repo": "nixpkgs",
-        "rev": "d7600c775f877cd87b4f5a831c28aa94137377aa",
+        "rev": "c7201c3be3c01af87c99770bbf05d4bef5cc435e",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "owner": "jfly",
+        "ref": "move-installDeviceTree",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -127,6 +144,7 @@
     },
     "root": {
       "inputs": {
+        "arm-trusted-firmware": "arm-trusted-firmware",
         "flake-parts": "flake-parts",
         "git-hooks-nix": "git-hooks-nix",
         "linux": "linux",

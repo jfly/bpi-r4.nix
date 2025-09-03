@@ -10,7 +10,7 @@
           name = "mediatek/mt7988a-bananapi-bpi-r4.dtb";
         };
 
-        #<<< what is this? where does it belong? >>>
+        # Enable (and speed up?) the attached eMMC storage.
         deviceTree.overlays = [
           {
             name = "bpi-r4-emmc";
@@ -53,7 +53,8 @@
         kernelParams = [
           "console=ttyS0,115200"
           "clk_ignore_unused" # FIXME: fix the clock tree ffs
-          # <<< "cma=256M" # Needed to fit NVMe buffers
+          # TODO: test out NVMe.
+          # "cma=256M" # Needed to fit NVMe buffers
         ];
       };
     };
