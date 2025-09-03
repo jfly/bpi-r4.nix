@@ -19,7 +19,7 @@ let
   );
 in
 {
-  flake.nixosConfigurations."bpi-r4-native" = inputs.nixpkgs.lib.nixosSystem {
+  flake.nixosConfigurations."liveusb-native" = inputs.nixpkgs.lib.nixosSystem {
     modules = [
       specialArgsModule
       ./configuration.nix
@@ -27,7 +27,7 @@ in
     inherit specialArgs;
   };
 
-  flake.nixosConfigurations."bpi-r4-cross" = inputs.nixpkgs.lib.nixosSystem {
+  flake.nixosConfigurations."liveusb-cross" = inputs.nixpkgs.lib.nixosSystem {
     modules = [
       specialArgsModule
       ./configuration.nix

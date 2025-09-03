@@ -17,7 +17,9 @@
       flake = false;
     };
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # TODO: revert once <https://github.com/NixOS/nixpkgs/pull/439700> lands in nixos-unstable.
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:jfly/nixpkgs/move-installDeviceTree-backport";
 
     systems.url = "github:nix-systems/default";
 
@@ -35,11 +37,10 @@
         ./formatting.nix
         ./nixos-modules
         ./uboot
-        ./example-systems
+        ./liveusb
       ];
 
       flake.overlays.default = final: prev: {
-        # <<< TODO: naming? `linuxPackages_bpi-r4`? should i be calling `final.linuxPackagesFor` or should the user? >>>
         linuxPackages_bpi-r4 = final.linuxPackagesFor (final.callPackage ./kernel.nix { inherit inputs; });
 
         # TODO: remove. Matt says mainline Linux works fine.

@@ -2,81 +2,129 @@
 
 This is mostly lift and shift from <https://gitlab.com/K900/nix>.
 
-### legacy notes
+## Bootstrapping a new board
 
-## Build firmware
-
-```console
-$ nix build .#nixosConfigurations.bpi-r4.config.system.build.bpir4-firmware
-```
-
-## In u-boot (from openwrt)
+Connect your BPI R4 via UART. Run `nix run .#flash-uart -- --serial <device>`
+(substituting your serial device) and wait for the "Handshake..." message:
 
 ```console
-MT7988> usb start
-starting USB...
-Bus xhci@11200000: xhci-mtk xhci@11200000: hcd: 0x0000000011200000, ippc: 0x0000000011203e00
-xhci-mtk xhci@11200000: ports disabled mask: u3p-0x0, u2p-0x0
-xhci-mtk xhci@11200000: u2p:1, u3p:1
-Register 200010f NbrPorts 2
-Starting the controller
-USB XHCI 1.10
-scanning bus xhci@11200000 for devices... 5 USB Device(s) found
-       scanning usb for storage devices... 1 Storage Device(s) found
-
-MT7988> ls usb 0
-            .Spotlight-V100/
-            .fseventsd/
-            .Trashes/
-            .TemporaryItems/
-   259232   bl2.img
-  1150524   fip.bin
-
-2 file(s), 4 dir(s)
-
-MT7988> load usb 0 $loadaddr bl2.img
-259232 bytes read in 5 ms (49.4 MiB/s)
-
-
-# Offsets from u-boot::arch/arm/dts/mt7988a-bananapi-bpi-r4.dtsi
-
-MT7988> mtd write spi-nand0 $loadaddr 0 0x200000
-Writing 2097152 byte(s) (1024 page(s)) at offset 0x00000000
-
-
-
-MT7988> load usb 0 $loadaddr fip.bin
-259232 bytes read in 5 ms (49.4 MiB/s)
-
-MT7988> mtd write spi-nand0 $loadaddr 0 0x580000
-Writing 2097152 byte(s) (1024 page(s)) at offset 0x00000000
+$ nix run .#flash-uart -- --serial /dev/ttyUSB0
+mtk_uartboot - 0.1.1
+Using serial port: /dev/ttyUSB0
+Handshake...
 ```
 
-## k900's uboot
-
-```
-$ nix eval .#nixosConfigurations.bananya.config.system.build.uboot
-$ sudo cp result/uboot.img /mnt/misc/
-
-# connect usb to board, boot to uboot via sd card
-
-MT7988> usb start
-MT7988> load usb 0 $loadaddr uboot.img
-6912065 bytes read in 51 ms (129.3 MiB/s)
-
-# omfg
-MT7988> mtd erase spi-nand0
-Erasing 0x00000000 ... 0x07ffffff (1024 eraseblock(s))
-
-MT7988> mtd write spi-nand0 $loadaddr 0 $filesize
-Size not on a page boundary (0x800), rounding to 0x698000
-Writing 6914048 byte(s) (3376 page(s)) at offset 0x00000000
-
-
-```
-
-## Build OS
+Now reboot your BPI R4:
 
 ```console
-$ nix build .#nixosConfigurations.bpi-r4.config.system.build.images.sd-card
+$ nix run .#flash-uart -- --serial /dev/ttyUSB0
+...
+hw code: 0x7988
+hw sub code: 0x8a00
+hw ver: 0xcb00
+sw ver: 0x1
+Baud rate set to 460800
+sending payload to 0x201000...
+Checksum: 0xb318
+Setting baudrate back to 115200
+Jumping to 0x201000 in aarch64...
+Waiting for BL2. Message below:
+==================================
+NOTICE:  BL2: v2.12.0(release):
+NOTICE:  BL2: Built : 00:00:00, Jan  1 1980
+NOTICE:  WDT: Cold boot
+NOTICE:  WDT: disabled
+NOTICE:  CPU: MT7988
+NOTICE:  EMI: Using DDR unknown settings
+NOTICE:  EMI: Detected DRAM size: 4096 MB
+NOTICE:  EMI: complex R/W mem test passed
+NOTICE:  LVTS: Enable thermal HW reset
+NOTICE:  Starting UART download handshake ...
+==================================
+BL2 UART DL version: 0x10
+Baudrate set to: 115200    # <--- This will hang for a while while transferring fib.bin --->
+FIP sent.
+==================================
+NOTICE:  Received FIP 0x117841 @ 0x40400000 ...
+==================================
 ```
+
+Now connect to the UART. This should drop you into a U-Boot shell (you may have
+to press enter to see anything):
+
+```console
+$ tio /dev/ttyUSB0
+...
+MT7988>
+```
+
+Build a live USB (`liveusb-cross` is a cross compiled version which might build
+faster if you're on x86):
+
+```console
+$ nix build .#nixosConfigurations.liveusb-native.config.system.build.isoImage
+$ sudo dd if=$(ls result/iso/nixos-minimal-*.iso) of=/dev/<DEVICE> status=progress
+```
+
+Plug the USB drive into your BPI R4, and boot it from
+U-Boot. If you see multiple bootflows, select the
+`usb_mass` one:
+
+```console
+MT7988> bootflow scan
+Cannot persist EFI variables without system partition
+scanning bus for devices...
+...
+
+MT7988> bootflow list
+Showing all bootflows
+Seq  Method       State   Uclass    Part  Name                      Filename
+---  -----------  ------  --------  ----  ------------------------  ----------------
+  0  extlinux     ready   mmc          1  mmc@11230000.bootdev.part /boot/extlinux/extlinux.conf
+  1  efi          ready   usb_mass_    1  usb_mass_storage.lun0.boo /EFI/BOOT/BOOTAA64.EFI
+---  -----------  ------  --------  ----  ------------------------  ----------------
+(2 bootflows, 2 valid)
+
+MT7988> bootflow select 1
+
+MT7988> bootflow boot
+** Booting bootflow 'usb_mass_storage.lun0.bootdev.part_1' with efi
+Add 'ramoops@42ff0000' node failed: FDT_ERR_EXISTS
+Booting /\EFI\BOOT\BOOTAA64.EFI
+
+Loading graphical boot menu...
+
+Press 't' to use the text boot menu on this console...
+
+error: no suitable video mode found.
+
+                         GNU GRUB  version 2.12
+...
+
+nixos login: nixos (automatic login)
+
+
+[nixos@nixos:~]$
+```
+
+Now flash the NAND chip:
+
+```console
+[nixos@nixos:~]$ bpi-r4-flash-nand mtd0
+Erasing blocks: 53/53 (100%)
+Writing data: 6750k/6750k (100%)
+Verifying data: 6750k/6750k (100%)
+```
+
+Flip the boot selection pin to NAND (0, 1) and reboot. You should boot back
+into the live USB environment.
+
+Proceed with installing NixOS as you usually do (see [NixOS
+Module](#nixos-module)). I install my OS to the eMMC block device, however you
+could boot from USB or SD card if you prefer.
+
+## NixOS Module
+
+This flake provides a NixOS module which sets up the correct kernel and
+devicetree. Once this is upstreamed, we will change the module to throw
+assertions.

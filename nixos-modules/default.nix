@@ -6,6 +6,12 @@
       hardware = {
         firmware = [ pkgs.mt7996-firmware ];
 
+        deviceTree = {
+          enable = true;
+          filter = null;
+          name = "mediatek/mt7988a-bananapi-bpi-r4.dtb";
+        };
+
         #<<< what is this? where does it belong? >>>
         deviceTree.overlays = [
           {
@@ -44,19 +50,13 @@
       boot = {
         kernelPackages = pkgs.linuxPackages_bpi-r4;
 
-        loader.systemd-boot.enable = true;
+        loader.efi.installDeviceTree = true;
 
         kernelParams = [
           "console=ttyS0,115200"
           "clk_ignore_unused" # FIXME: fix the clock tree ffs
-          # <<< "regulator_ignore_unused" # <<<< adding because i'm seeing "vproc: disabling" after ~30 seconds ????
-          # <<< # without:
-          # <<< # [   33.760577] vproc: disabling
-          # <<< # with:
-          # <<< # [   33.764081] regulator: Not disabling unused regulators
           # <<< "cma=256M" # Needed to fit NVMe buffers
         ];
-        # <<< initrd.availableKernelModules = [ "uas" ];
       };
     };
 }
