@@ -4,8 +4,6 @@
     { pkgs, ... }:
     {
       hardware = {
-        firmware = [ pkgs.mt7996-firmware ];
-
         deviceTree = {
           enable = true;
           filter = null;
